@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Mars Finds</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+  </head>
+
+  <body class="text-white" style="background-color:rgb(0, 102, 128);">
+    <div class="container">
+      <!-- Jumbotron -->
+      <div
+        class="jumbotron text-center"
+        style="background-image: url(https://i.ytimg.com/vi/vSL1HahX3h8/maxresdefault.jpg); background-size: 100%; height: 100%;"
+      >
+        <h1>Mission to Mars</h1>
+        <a class="btn btn-primary btn-lg" href="/scrape" role="button"
+          >Scrape New Data</a
+        >
+      </div>
+
+      <!-- News Section -->
+      <div class="container">
+        <h3 style="font-family: inherit; color: black; font-size: 20px; font-weight: 400;">Latest Mars News</h3>
+        <h6 style="color: black">{{ mars_info.news_title }}</h6>
+        <p style="color: black; font-size: 13px;  font-family: inherit;">{{ mars_info.news_p }}</p>
+      </div>
+
+      <hr />
+
+      <div class="container">
+        <div class="row">
+          <!-- Left Image-->
+          <div class="col-lg-8 col-md-8 col-sm-12">
+            <h3 style="font-weight: 400; color: black; font-size: 20px; font-family: inherit;">Featured Mars Image</h3>
+            <img
+              src="{{ mars_info.featured_image_url }}"
+              style="max-width:100%; max-height: auto;"
+              alt="Mars Featured Image"
+            />
+          </div>
+
+          <!-- Weather Card -->
+          <div class="col-lg-4 col-md-4 col-sm-12">
+            <div class="card border-success mb-3" style="max-width: 18rem;">
+              <div
+                class="card-header bg-transparent border-success"
+                style="color: black; font-size: 18px; font-weight: 400; font-family: inherit;"
+              >
+                Mars Weather
+              </div>
+              <div class="card-body text-success">
+                <h5 class="card-title" style="color: black; font-size: 14px; font-weight: 600;">
+                  Current Weather on Mars
+                </h5>
+                <p class="card-text" style="color: black; font-size: 13px;  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                  {{ mars_info.mars_weather }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <br />
+            <h3 style="font-size: 18px; color: black; font-weight: 400; font-family: inherit;">Mars Facts</h3>
+            <div
+              style="max-width: 450px; max-height: 150px; font-size: 13px; margin-bottom: 65px; color: black;"
+            >
+              {{ mars_info.mars_facts|safe}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Container -->
+
+      <!-- Cards -->
+      <h3 style="padding-top: 50px; margin-top: 100px; text-align: center;">
+        Mars Hemispheres
+      </h3>
+      <!-- <div class="card-deck"> -->
+        <hr />
+        <div class="content">
+          <div class="container-fluid">
+            <div class="row">
+              {% for item in mars_info.hemisphere_image_urls %}
+              <div class="col-xs-12 col-sm-12 col-md-6">
+              <div class="col-xs-12 col-sm-12 col-md-6">
+              <div class="col-xs-12 col-sm-12 col-md-6">
+              <div class="col-xs-12 col-sm-12 col-md-6">
+                
+                <!-- <div class="card text-white bg-dark" style="margin: 20px;"> -->
+                  <h2 style="font-size: 13px; color: black; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;" >{{ item.title }}</h2>
+                  <img class="img-fluid" src="{{ item.img_url }}" height="500" width="500"/>
+                  
+                <!-- <div class="card-body"> -->
+                  <!-- <p class="card-text">{{ item.titles }}</p> -->
+                <!-- </div> -->
+                <!-- </div> -->
+              </div>
+              </div>
+              </div>
+              </div>
+              {% endfor %}
+          
+            </div>
+          </div>
+        </div>
+      <!-- </div> -->
+    </div>
+    <!-- Close main container -->
+
+    <!-- Footer Section -->
+    <footer>
+      <div class="footer" style="font-family: inherit; color: black; font-size: 14px;">Copyright &copy; Genti Kosumi 2020</div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

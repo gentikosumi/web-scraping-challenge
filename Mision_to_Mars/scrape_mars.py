@@ -25,10 +25,6 @@ def scrape_news():
     try:
 
         browser = init_browser()
-        listings = {}
-
-
-
         url = 'https://mars.nasa.gov/news/'
 
         # Retrieve page with the requests module
@@ -39,45 +35,19 @@ def scrape_news():
         soup = BeautifulSoup(response.text, 'html.parser')
 
 
-    # Extract title text
+        # Extract title text
         news = soup.find_all('div', class_="content_title")
-        print(len (news))
-
-
-        # A blank list to hold the headlines
-        news_title = []
-        # Loop over div elements
-        for new in news:
-            # If new element has an anchor...
-            if (new.a):
-                # And the anchor has non-blank text...
-                if (new.a.text):
-                    
-                    news_title.append(new)
-
-
-        # Print only the headlines
-        for x in range(6):
-            print(news_title[x].text) 
+        # print(len (news))
+        
+        news_title = soup.find('div', class_="content_title").find('a').text
 
         mars_info['news_title']= news_title       
 
 
         # Extract description text
         results = soup.find_all('div', class_="rollover_description_inner")
-        print(results)
-
-        # A blank list to hold the descriptions
-        news_p = []
-        # Loop over div elements
-        for result in results:
-            if (result.text):
-            # Append the description to the list
-                news_p.append(result)
                 
-                
-                for x in range(6):
-                    print(news_p[x].text)
+        news_p = soup.find('div', class_="rollover_description_inner").text
 
         mars_info['news_p']= news_p
 
@@ -87,183 +57,164 @@ def scrape_news():
         browser.quit()
 
 
-    def scrape_image():
-        try:
-            
-            executable_path = {'executable_path': '/usr/local/bin/chromedriver'}
-            browser = Browser('chrome', **executable_path, headless=False)
+def scrape_image():
+    try:
+        executable_path = {'executable_path': '/usr/local/bin/chromedriver'}
+        browser = Browser('chrome', **executable_path, headless=False)
 
 
-            url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
-            browser.visit(url)
+        url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
+        browser.visit(url)
 
 
-            # Retrieve page with the requests module
-            response = requests.get(url)
+        # Retrieve page with the requests module
+        response = requests.get(url)
 
-            # Create BeautifulSoup object; parse with 'html.parser'
-            soup = BeautifulSoup(response.text, 'html.parser')
+        # Create BeautifulSoup object; parse with 'html.parser'
+        soup = BeautifulSoup(response.text, 'html.parser')
 
-            # Examine the results, then determine element that contains sought info
-            # print(soup.prettify())
+        # Examine the results, then determine element that contains sought info
+        # print(soup.prettify())
 
-            articles = soup.find_all('a', class_="fancybox")
-            articles
-            img_list = []
-            url_list = []
-            featured_image_url = []
-            for article in articles:
-                img_url = article["data-fancybox-href"]
-                url_list.append(img_url)
-            #   print(url_list)
+        articles = soup.find_all('a', class_="fancybox")
+        articles
+        img_list = []
+        url_list = []
+        featured_image_url = []
+        for article in articles:
+            img_url = article["data-fancybox-href"]
+            url_list.append(img_url)
+            # print(url_list)
 
-            featured_image_url = ['https://www.jpl.nasa.gov/' + url for url in url_list ]
-            featured_image_url
+        featured_image = ['https://www.jpl.nasa.gov/' + url for url in url_list ]
+        featured_image_url = featured_image[0]
 
-            mars_info['featured_image_url'] = featured_image_url
+        mars_info['featured_image_url'] = featured_image_url
 
-            return mars_info
+        return mars_info
         
-        finally:
+    finally:
 
-            browser.quit()
+        browser.quit()
 
 
 
     # __Mars Weather
 
-    def scrape_weather ():
+def scrape_weather ():
+    
+    try:
+        executable_path = {'executable_path': '/usr/local/bin/chromedriver'}
+        browser = Browser('chrome', **executable_path, headless=False)
+        
+        url = 'https://twitter.com/marswxreport?lang=en'
+        browser.visit(url)
 
-        try:
+        # Retrieve page with the requests module
+        response = requests.get(url)
 
+        # Create BeautifulSoup object; parse with 'html.parser'
+        soup = BeautifulSoup(response.text, 'html.parser')
+        # print(soup.prettify())
 
-            url = 'https://twitter.com/marswxreport?lang=en'
-            browser.visit(url)
+        # The latest Mars weather tweet from the page
+        tweets = soup.find_all('div', class_='js-tweet-text-container')
 
-            # Retrieve page with the requests module
-            response = requests.get(url)
+        # Look for entries that display weather related words to exclude non weather related tweets 
+        for tweet in tweets:
+            mars_weather = tweet.find('p').text
+            if 'Sol' and 'pressure' in mars_weather:
+                print(mars_weather)
+                break
+            else:
+                pass
 
-            # Create BeautifulSoup object; parse with 'html.parser'
-            soup = BeautifulSoup(response.text, 'html.parser')
-            # print(soup.prettify())
+        mars_info['mars_weather'] = mars_weather
 
-            results = soup.find_all('p', class_="TweetTextSize")
-            print(len (results))
+        return mars_info
 
-            mars_tweet = []
-            # Loop over div elements
-            for result in results:
-                if (result.text):
-                # Append the description to the list
-                    mars_tweet.append(result)
-
-            # Print only the tweets
-            for x in range(20):
-                print("------")
-                print(mars_tweet[x].text)
-
-            # The latest Mars weather tweet from the page
-            mars_weather = mars_tweet[6].text
-            print(mars_weather.strip("\n"))
-
-            mars_info['mars_weather'] = mars_weather
-
-            return mars_info
-
-        finally:
-             browser.quit()
+    finally:
+        browser.quit()
 
 
 # Mars Facts
 
-    def scrape_facts():
+def scrape_facts():
 
-        url = 'https://space-facts.com/mars/'
-        tables = pd.read_html(url)
-        tables
+    url = 'https://space-facts.com/mars/'
+    tables = pd.read_html(url)
+    tables
 
-        mars_df = tables[0]
-        mars_df.columns = ['Fact', 'Measurement']
-        mars_df
+    mars_df = tables[0]
+    mars_df.columns = ['Fact', 'Measurement']
 
-        serie = pd.Series(mars_df['Fact'])
-        mars_df['Fact'] = serie.str.strip(":")
-        mars_df = mars_df.set_index('Fact')
-        mars_df
+    mars_df.set_index('Fact')
+    mars_df
 
-        mars_facts = mars_df.to_html('mars_facts.html')
-        mars_info['mars_facts'] = mars_facts
+    facts = mars_df.to_html()
+    mars_info['mars_facts'] = facts
 
-        return mars_info
+    return mars_info
+    
 
         # Mars hemisphere
 
-    def scrape_hemispheres ():
+def scrape_hemispheres ():
+    try:
 
-        try:
+        executable_path = {'executable_path': '/usr/local/bin/chromedriver'}
+        browser = Browser('chrome', **executable_path, headless=False)
 
-            executable_path = {'executable_path': '/usr/local/bin/chromedriver'}
-            browser = Browser('chrome', **executable_path, headless=False)
-
-            url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
-            browser.visit(url)
+        url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
+        browser.visit(url)
 
 
-            html = browser.html
-            soup = BeautifulSoup(html, 'html.parser')
-            print(soup.prettify())
+        html = browser.html
+        soup = BeautifulSoup(html, 'html.parser')
+        # print(soup.prettify())
 
-            results = soup.find_all('div', class_="description")
-            print(results)
+        results = soup.find_all('div', class_="item")
+        # print(results)
 
-            base_url = 'https://astrogeology.usgs.gov'
-            titles = []
-            next_urls = []
+        # Store the main url
+        base_url = 'https://astrogeology.usgs.gov'
 
-            for result in results:
-                # scrape the title 
-                hem_title = result.find('h3').text
-                titles.append(hem_title)
+        hemisphere_image_urls = []
+
+        for result in results:
+            # scrape the title 
+            title = result.find('h3').text
     
-                # Identify and return link to listing
-                link = result.a['href']
-                hem_link = base_url + link
-                next_urls.append(hem_link)
     
-
-            titles
-            next_urls
-
-            img_url = []
-
-            for next_url in next_urls:
-                url = next_url
-                html = browser.html
-                soup = BeautifulSoup(html, 'html.parser')
-                img_link = soup.find('img', class_="wide-image")
-                final = img_link['src']
-                img_final = base_url + final
-                img_url.append(img_final)
-
-            img_url    
-
-            hemisphere_image_urls = []
-
-            for i in range(max((len(titles), len(img_url)))):
+            # Identify and return link to listing
+            link = result.find('a', class_='itemLink product-item')['href']
     
-                g = {titles[i]: img_url[i]}
-                hemisphere_image_urls.append(g)
+            # Visit the link that contains the full image website 
+            browser.visit(base_url + link)
+    
+            # HTML Object of individual hemisphere information website 
+            link = browser.html
+    
+            # Parse HTML with Beautiful Soup for every individual hemisphere information website 
+            soup = BeautifulSoup( link, 'html.parser')
+    
+            # Retrieve full image source 
+            img_url = base_url + soup.find('img', class_='wide-image')['src']
+    
+            # Append the retreived information into a list of dictionaries 
+            hemisphere_image_urls.append({"title" : title, "img_url" : img_url})
+
  
   
-            mars_info['hemisphere_image_urls'] = hemisphere_image_urls
+        mars_info['hemisphere_image_urls'] = hemisphere_image_urls
 
-            return mars_info
+        return mars_info
 
-        finally:
+    finally:
 
-            browser.quit()     
+        browser.quit()
 
-
+        
 
 
 
