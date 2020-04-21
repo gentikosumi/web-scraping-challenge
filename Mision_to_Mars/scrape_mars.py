@@ -12,7 +12,7 @@ from splinter.exceptions import ElementDoesNotExist
 def init_browser():
     # @NOTE: Replace the path with your actual path to the chromedriver
     executable_path = {"executable_path": "/usr/local/bin/chromedriver"}
-    return Browser("chrome", **executable_path, headless=False)
+    return Browser("chrome", **executable_path, headless=True)
 
 
 # Create Mission to Mars global dictionary that can be imported into Mongo
@@ -60,7 +60,7 @@ def scrape_news():
 def scrape_image():
     try:
         executable_path = {'executable_path': '/usr/local/bin/chromedriver'}
-        browser = Browser('chrome', **executable_path, headless=False)
+        browser = Browser('chrome', **executable_path, headless=True)
 
 
         url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
@@ -105,7 +105,7 @@ def scrape_weather ():
     
     try:
         executable_path = {'executable_path': '/usr/local/bin/chromedriver'}
-        browser = Browser('chrome', **executable_path, headless=False)
+        browser = Browser('chrome', **executable_path, headless=True)
         
         url = 'https://twitter.com/marswxreport?lang=en'
         browser.visit(url)
@@ -151,7 +151,7 @@ def scrape_facts():
     mars_df.set_index('Fact')
     mars_df
 
-    facts = mars_df.to_html()
+    facts = mars_df.to_html(index=False)
     mars_info['mars_facts'] = facts
 
     return mars_info
@@ -163,7 +163,7 @@ def scrape_hemispheres ():
     try:
 
         executable_path = {'executable_path': '/usr/local/bin/chromedriver'}
-        browser = Browser('chrome', **executable_path, headless=False)
+        browser = Browser('chrome', **executable_path, headless=True)
 
         url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
         browser.visit(url)
