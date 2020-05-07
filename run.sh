@@ -1,1 +1,0 @@
-FLASK_APP=Mision_to_Mars/app.py flask run
